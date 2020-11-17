@@ -1,8 +1,8 @@
-package com.ncsoft.bokbulbok
+package com.maro.luckyme
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.ncsoft.bokbulbok.ui.main.MainFragment
+import com.maro.luckyme.ui.main.MainFragment
 
 class MainActivity : AppCompatActivity() {
 

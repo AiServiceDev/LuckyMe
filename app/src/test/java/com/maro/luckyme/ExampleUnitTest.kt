@@ -1,4 +1,4 @@
-package com.ncsoft.bokbulbok
+package com.maro.luckyme
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -1,4 +1,4 @@
-package com.ncsoft.bokbulbok.ui.main
+package com.maro.luckyme.ui.main
 
 import android.arch.lifecycle.ViewModel
 

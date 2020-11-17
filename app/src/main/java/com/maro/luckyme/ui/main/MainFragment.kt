@@ -1,4 +1,4 @@
-package com.ncsoft.bokbulbok.ui.main
+package com.maro.luckyme.ui.main
 
 import android.arch.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.ncsoft.bokbulbok.R
+import com.maro.luckyme.R
 
 class MainFragment : Fragment() {
 

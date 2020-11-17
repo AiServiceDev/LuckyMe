@@ -1,1 +1,1 @@
-# BokBulBok [![Build Status](https://travis-ci.com/AiServiceDev/BokBulBok.svg?branch=main)](https://travis-ci.com/AiServiceDev/BokBulBok)
+# LuckyMe [![Build Status](https://travis-ci.com/AiServiceDev/LuckyMe.svg?branch=main)](https://travis-ci.com/AiServiceDev/LuckyMe)

@@ -16,6 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.sadari.SadariActivity" />
+        <activity android:name=".ui.dice.DiceActivity" />
+        <activity android:name=".ui.jebi.JebiActivity" />
     </application>
 
 </manifest>

@@ -60,7 +60,10 @@ dependencies {
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-
+    implementation "androidx.recyclerview:recyclerview-selection:1.1.0-rc03"
+    implementation "androidx.recyclerview:recyclerview:${recyclerViewVersion}"
+    implementation "androidx.cardview:cardview:${cardviewVersion}"
+    implementation "com.airbnb.android:lottie:${lottieVersion}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     implementation "androidx.appcompat:appcompat:${appcompatVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${constraintLayoutVersion}"

@@ -3,6 +3,7 @@ buildscript {
     ext {
         // App dependencies [A -> Z]
         appcompatVersion = '1.2.0'
+        cardViewVersion = '1.0.0'
         constraintLayoutVersion = '2.0.4'
         kotlinCoroutinesVersion = '1.3.7'
         kotlinVersion = "1.4.10"

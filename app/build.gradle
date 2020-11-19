@@ -69,6 +69,7 @@ dependencies {
     // UI
     implementation "androidx.appcompat:appcompat:${appcompatVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${constraintLayoutVersion}"
+    implementation "androidx.cardview:cardview:${cardViewVersion}"
 
     // Architecture Components
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycleVersion}"

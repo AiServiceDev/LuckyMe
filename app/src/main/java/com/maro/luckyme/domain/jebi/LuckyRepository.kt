@@ -1,5 +1,9 @@
-package com.maro.luckyme.domain
+package com.maro.luckyme.domain.jebi
 
+import com.maro.luckyme.domain.Result
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.random.Random
 
 class LuckyRepository {
@@ -12,6 +16,15 @@ class LuckyRepository {
         val first = makeRandom(winning, total)
         val second = makeRandom(total, total)
         return Result.Success(Pair(first, second))
+    }
+
+    suspend fun makeResultCoroutine(winning: Int, total: Int): Pair<List<Int>, List<Int>> {
+        return withContext(Dispatchers.IO) {
+            Timber.d("[sunchulbaek] makeResultCoroutine() ${Thread.currentThread()}")
+            val first = makeRandom(winning, total)
+            val second = makeRandom(total, total)
+            Pair(first, second)
+        }
     }
 
     private fun makeRandom(winning: Int, total: Int): List<Int> {

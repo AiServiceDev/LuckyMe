@@ -7,10 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import com.maro.luckyme.databinding.DiceFragmentBinding
 import com.maro.luckyme.databinding.ItemDiceBinding
 import com.maro.luckyme.ui.dice.data.DiceUiData
@@ -41,6 +38,8 @@ class DiceFragment : Fragment() {
                     this@DiceFragment.viewLifecycleOwner
                 )
                 layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
+                itemAnimator = DefaultItemAnimator()
+
             }
             executePendingBindings()
         }
@@ -50,11 +49,21 @@ class DiceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.dataList.observe(this@DiceFragment) {
-            (binding.rvResult.adapter as? DiceResultAdapter)?.submitList(it)
-        }
-
+        setObserver()
         viewModel.generatorNextDiceData()
+    }
+
+    private fun setObserver() {
+        viewModel.apply {
+            currentDataList.observe(viewLifecycleOwner) {
+                (binding.rvResult.adapter as? DiceResultAdapter)?.submitList(it)
+            }
+            scrollToEnd.observe(viewLifecycleOwner) {
+                binding.rvResult.adapter?.itemCount?.let {
+                    binding.rvResult.smoothScrollToPosition(it)
+                }
+            }
+        }
     }
 }
 
@@ -78,7 +87,7 @@ class DiceResultAdapter(
     }
 
     override fun onBindViewHolder(holder: BaseDiceViewHolder, position: Int) {
-        holder.onBindView(position, getItem(position))
+        holder.onBindView(getItem(position))
     }
 }
 
@@ -93,7 +102,7 @@ object DiceResultAdapterDiffUtil : DiffUtil.ItemCallback<DiceUiData>() {
 }
 
 abstract class BaseDiceViewHolder(item: View) : RecyclerView.ViewHolder(item) {
-    abstract fun onBindView(position: Int, diceDataList: DiceUiData)
+    abstract fun onBindView(diceDataList: DiceUiData)
 }
 
 class DiceViewHolder(
@@ -102,10 +111,13 @@ class DiceViewHolder(
     private val lifecycleOwner: LifecycleOwner
 ) :
     BaseDiceViewHolder(binding.root) {
-    override fun onBindView(position: Int, diceDataList: DiceUiData) {
+    override fun onBindView(diceDataList: DiceUiData) {
         binding.apply {
             viewModel = this@DiceViewHolder.viewModel
+            diceUiData = diceDataList
+            position = adapterPosition
             lifecycleOwner = this@DiceViewHolder.lifecycleOwner
+            executePendingBindings()
         }
     }
 }

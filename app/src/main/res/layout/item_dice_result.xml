@@ -44,7 +44,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.40"
+                app:layout_constraintVertical_bias="0.25"
                 app:lottie_progress="1" />
 
             <!--  id = 3           -->
@@ -59,7 +59,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.40"
+                app:layout_constraintVertical_bias="0.25"
                 app:lottie_progress="1" />
 
             <!--  id = 4 -->
@@ -67,7 +67,6 @@
                 android:id="@+id/laDice3"
                 android:layout_width="65dp"
                 android:layout_height="125dp"
-                android:layout_marginTop="10dp"
                 android:visibility="@{viewModel.getDiceVisibility(4)}"
                 app:diceUiData="@{diceUiData}"
                 app:diceId="@{4}"
@@ -86,14 +85,12 @@
                 android:visibility="@{viewModel.getDiceVisibility(1)}"
                 app:diceUiData="@{diceUiData}"
                 app:diceId="@{1}"
-                android:translationY="10dp"
                 app:diceViewModel="@{viewModel}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:lottie_progress="1" />
-
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/profile"
@@ -103,6 +100,7 @@
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_circle_500"
                 app:kanjiSrc="@{position}"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/ic_cow" />

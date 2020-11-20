@@ -25,11 +25,11 @@ class CommonData {
         )
 
         @JvmStatic
-        fun get12KanjiListByIndex(index: Int): Int? {
+        fun get12KanjiListByIndex(index: Int): Int {
             if (index in icon12KanjiList.indices) {
                 return icon12KanjiList[index]
             }
-            return null
+            return R.drawable.ic_pig
         }
     }
 

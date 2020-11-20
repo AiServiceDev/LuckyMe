@@ -6,6 +6,7 @@ import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.maro.luckyme.R
+import com.maro.luckyme.data.common.CommonData
 import com.maro.luckyme.domain.jebi.GetJebiParam
 import com.maro.luckyme.domain.jebi.GetJebiUseCase
 import com.maro.luckyme.domain.jebi.LuckyRepository
@@ -59,7 +60,7 @@ class JebiViewModel : ViewModel() {
                     Timber.d("[sunchulbaek] 당첨 = ${it.data.first}")
                     Timber.d("[sunchulbaek] 전체 = ${it.data.second}")
                     it.data.second.forEachIndexed { index, shuffledIndex ->
-                        add(JebiItem(icons[shuffledIndex], it.data.first.contains(index)))
+                        add(JebiItem(CommonData.get12KanjiListByIndex(shuffledIndex), it.data.first.contains(index)))
                     }
                 }
                 is Result.Error -> TODO()

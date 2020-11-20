@@ -1,5 +1,6 @@
 package com.maro.luckyme.domain.jebi
 
+import com.maro.luckyme.data.common.CommonData
 import com.maro.luckyme.domain.FlowUseCase
 import com.maro.luckyme.domain.Result
 import com.maro.luckyme.ui.jebi.JebiItem
@@ -21,7 +22,7 @@ class GetJebiFlowUseCase(
         Timber.d("[sunchulbaek] 당첨 = ${result.first}")
         Timber.d("[sunchulbaek] 전체 = ${result.second}")
         result.second.forEachIndexed { index, shuffledIndex ->
-            ret.add(JebiItem(JebiViewModel.icons[shuffledIndex], result.first.contains(index)))
+            ret.add(JebiItem(CommonData.get12KanjiListByIndex(shuffledIndex), result.first.contains(index)))
         }
         emit(Result.Success(ret))
     }

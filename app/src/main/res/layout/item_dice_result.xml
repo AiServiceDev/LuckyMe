@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.maro.luckyme.ui.dice.DiceViewModel" />
+
+        <variable
+            name="diceUiData"
+            type="com.maro.luckyme.ui.dice.data.DiceUiData" />
+
+        <variable
+            name="position"
+            type="Integer" />
+    </data>
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="@color/indigo_200"
+        app:cardCornerRadius="8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!--  id = 2           -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/laDice1"
+                android:layout_width="75dp"
+                android:layout_height="150dp"
+                android:visibility="@{viewModel.getDiceVisibility(2)}"
+                app:diceViewModel="@{viewModel}"
+                app:diceUiData="@{diceUiData}"
+                app:diceId="@{2}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.25"
+                app:lottie_progress="1" />
+
+            <!--  id = 3           -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/laDice2"
+                android:layout_width="75dp"
+                android:layout_height="150dp"
+                android:visibility="@{viewModel.getDiceVisibility(3)}"
+                app:diceUiData="@{diceUiData}"
+                app:diceId="@{3}"
+                app:diceViewModel="@{viewModel}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.25"
+                app:lottie_progress="1" />
+
+            <!--  id = 4 -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/laDice3"
+                android:layout_width="65dp"
+                android:layout_height="125dp"
+                android:visibility="@{viewModel.getDiceVisibility(4)}"
+                app:diceUiData="@{diceUiData}"
+                app:diceId="@{4}"
+                app:diceViewModel="@{viewModel}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_progress="1" />
+
+            <!--  id = 1  -->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/laDice4"
+                android:layout_width="100dp"
+                android:layout_height="175dp"
+                android:layout_marginTop="50dp"
+                android:visibility="@{viewModel.getDiceVisibility(1)}"
+                app:diceUiData="@{diceUiData}"
+                app:diceId="@{1}"
+                app:diceViewModel="@{viewModel}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_progress="1" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/profile"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_circle_500"
+                app:kanjiSrc="@{position}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/ic_cow" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+
+</layout>

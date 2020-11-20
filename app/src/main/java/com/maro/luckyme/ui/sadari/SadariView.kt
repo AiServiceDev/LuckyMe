@@ -98,7 +98,7 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         pathMatrix = Matrix()
 
         paint = Paint()
-        paint?.setColor(ContextCompat.getColor(context, R.color.purple_200))
+        paint?.setColor(ContextCompat.getColor(context, R.color.indigo_200))
         paint?.strokeWidth = STROKE_WIDTH.toFloat()
 
         paint2 = Paint()

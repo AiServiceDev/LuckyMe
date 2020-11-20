@@ -61,9 +61,23 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinCoroutinesVersion}"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${kotlinCoroutinesVersion}"
+
+    // UI
     implementation "androidx.appcompat:appcompat:${appcompatVersion}"
     implementation "androidx.constraintlayout:constraintlayout:${constraintLayoutVersion}"
+    implementation "androidx.cardview:cardview:${cardViewVersion}"
+    implementation "androidx.recyclerview:recyclerview-selection:1.1.0-rc03"
+    implementation "androidx.recyclerview:recyclerview:${recyclerViewVersion}"
+    implementation "com.airbnb.android:lottie:${lottieVersion}"
+
+    // Architecture Components
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycleVersion}"
+
+    // Timber
+    implementation "com.jakewharton.timber:timber:${timberVersion}"
 }

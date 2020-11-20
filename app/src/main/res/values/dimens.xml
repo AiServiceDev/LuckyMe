@@ -3,6 +3,9 @@
 
     <dimen name="dp8">8dp</dimen>
 
+    <dimen name="jebi_horizontal_margin">8dp</dimen>
+    <dimen name="jebi_vertical_margin">8dp</dimen>
+
     <!-- 사다리 -->
     <dimen name="sadari_stroke_width">4dp</dimen>
     <dimen name="sadari_player_width">40dp</dimen>

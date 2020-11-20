@@ -10,7 +10,9 @@ import com.maro.luckyme.domain.jebi.GetJebiParam
 import com.maro.luckyme.domain.jebi.GetJebiUseCase
 import com.maro.luckyme.domain.jebi.LuckyRepository
 import com.maro.luckyme.domain.Result
+import com.maro.luckyme.domain.jebi.GetJebiFlowUseCase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -34,6 +36,7 @@ class JebiViewModel : ViewModel() {
     }
 
     private val getJebiUseCase = GetJebiUseCase(Dispatchers.IO)
+    private val getJebiFlowUseCase = GetJebiFlowUseCase(Dispatchers.IO)
 
     // 밋밋한 버전
     val param = MutableLiveData<Pair<Int, Int>>()
@@ -44,6 +47,7 @@ class JebiViewModel : ViewModel() {
     // Coroutine 버전
     var paramCoroutine: Pair<Int, Int>? = null
     // Flow 버전
+    var paramFlow: Pair<Int, Int>? = null
     // 결과
     val items = MediatorLiveData<List<JebiItem>>()
     val selected = MutableLiveData<JebiItem>()
@@ -81,20 +85,45 @@ class JebiViewModel : ViewModel() {
         }
     }
 
-    fun minus() {
-        if (paramCoroutine != null) { // 코루틴 버전
+    // Flow 버전
+    fun initFlow(winning: Int, total: Int) = viewModelScope.launch(Dispatchers.Main) {
+        paramFlow = Pair(winning, total)
+        Timber.d("[sunchulbaek] initFlow(1) ${Thread.currentThread()}")
+        getJebiFlowUseCase(GetJebiParam(winning, total)).collect {
+            when (it) {
+                is Result.Success -> {
+                    Timber.d("[sunchulbaek] initFlow(2) ${Thread.currentThread()}")
+                    items.value = it.data
+                }
+                is Result.Error -> TODO()
+            }
+        }
+    }
+
+    fun minus() = when {
+        paramFlow != null -> { // Flow 버전
+            initFlow(paramFlow!!.first, paramFlow!!.second - 1)
+            paramFlow = Pair(paramFlow!!.first, paramFlow!!.second - 1)
+        }
+        paramCoroutine != null -> { // Coroutine 버전
             initCoroutine(paramCoroutine!!.first, paramCoroutine!!.second - 1)
             paramCoroutine = Pair(paramCoroutine!!.first, paramCoroutine!!.second - 1)
-        } else { // 일반 버전
+        }
+        else -> { // 밋밋한 버전
             param.value = Pair(2, (param.value?.second ?: 0) - 1)
         }
     }
 
-    fun plus() {
-        if (paramCoroutine != null) { // 코루틴 버전
+    fun plus() = when {
+        paramFlow != null -> { // Flow 버전
+            initFlow(paramFlow!!.first, paramFlow!!.second + 1)
+            paramFlow = Pair(paramFlow!!.first, paramFlow!!.second + 1)
+        }
+        paramCoroutine != null -> { // Coroutine 버전
             initCoroutine(paramCoroutine!!.first, paramCoroutine!!.second + 1)
             paramCoroutine = Pair(paramCoroutine!!.first, paramCoroutine!!.second + 1)
-        } else { // 일반 버전
+        }
+        else -> { // 밋밋한 버전
             param.value = Pair(2, (param.value?.second ?: 0) + 1)
         }
     }

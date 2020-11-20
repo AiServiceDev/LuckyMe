@@ -25,8 +25,8 @@ class JebiFragment : Fragment() {
         binding = JebiFragmentBinding.inflate(inflater, null, false).apply {
             viewModel = this@JebiFragment.viewModel.apply {
                 // initPlain(2, 12) // 밋밋한 버전. 임의 지정
-                initCoroutine(2, 12) // 코루틴 버전
-                // initFlow(2, 12) // TODO : Flow 버전
+                // initCoroutine(2, 12) // 코루틴 버전
+                initFlow(2, 12) // Flow 버전
             }
             lifecycleOwner = this@JebiFragment
         }

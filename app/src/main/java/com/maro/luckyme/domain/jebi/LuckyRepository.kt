@@ -27,6 +27,13 @@ class LuckyRepository {
         }
     }
 
+    fun makeResultFlow(winning: Int, total: Int): Pair<List<Int>, List<Int>> {
+        Timber.d("[sunchulbaek] makeResultFlow() ${Thread.currentThread()}")
+        val first = makeRandom(winning, total)
+        val second = makeRandom(total, total)
+        return Pair(first, second)
+    }
+
     private fun makeRandom(winning: Int, total: Int): List<Int> {
         val pool = mutableListOf<Int>().apply {
             for (i in 0 until total) add(i)

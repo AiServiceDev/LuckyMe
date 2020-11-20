@@ -32,18 +32,20 @@ object DataHelper {
         var hasNext = false
         while (true) {
             hasNext = false
-            sadari[curPlayerIndex].branchList?.forEach { branch ->
-                if (branch.position > curPosition) {
-                    curPosition = branch.position
-                    curPlayerIndex +=
-                            if (branch.direction == DIRECTION_RIGHT) {
-                                1
-                            } else {
-                                -1
-                            }
-                    pathList.add(branch)
-                    hasNext = true
-                    return@forEach
+            run breaker@ {
+                sadari[curPlayerIndex].branchList?.forEach { branch ->
+                    if (branch.position > curPosition) {
+                        curPosition = branch.position
+                        curPlayerIndex +=
+                                if (branch.direction == DIRECTION_RIGHT) {
+                                    1
+                                } else {
+                                    -1
+                                }
+                        pathList.add(branch)
+                        hasNext = true
+                        return@breaker
+                    }
                 }
             }
 
@@ -67,6 +69,7 @@ object DataHelper {
         var rightStream = Stream()
 
         while (true) {
+            // position 0부터 시작
             var position = Random().nextInt(VERTICAL_COUNT)
             if (checkDuplication(position, leftStream.branchList)) {
                 continue

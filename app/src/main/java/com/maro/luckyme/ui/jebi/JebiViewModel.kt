@@ -1,9 +1,13 @@
 package com.maro.luckyme.ui.jebi
 
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.maro.luckyme.R
-import kotlin.random.Random
+import com.maro.luckyme.domain.LuckyRepository
+import com.maro.luckyme.domain.Result
+import timber.log.Timber
 
 class JebiViewModel : ViewModel() {
 
@@ -22,21 +26,41 @@ class JebiViewModel : ViewModel() {
         R.drawable.ic_pig
     )
 
-    val items = MutableLiveData<List<JebiItem>>()
+    val param = MutableLiveData<Pair<Int, Int>>()
+    val result = map(param) {
+        val repository = LuckyRepository()
+        repository.makeResult(it.first, it.second)
+    }
+    val items = MediatorLiveData<List<JebiItem>>()
     val selected = MutableLiveData<JebiItem>()
 
-    fun minus() = items.value?.let {
-        items.value = it.minus(it[it.size - 1])
+    init {
+        items.addSource(result) {
+            items.value = when (it) {
+                is Result.Success -> mutableListOf<JebiItem>().apply {
+                    Timber.d("[sunchulbaek] 당첨 = ${it.data.first}")
+                    Timber.d("[sunchulbaek] 전체 = ${it.data.second}")
+                    it.data.second.forEachIndexed { index, shuffledIndex ->
+                        add(JebiItem(icons[shuffledIndex], it.data.first.contains(index)))
+                    }
+                }
+                is Result.Error -> TODO()
+            }
+        }
+    }
+
+    fun minus() {
+        param.value = Pair(2, (param.value?.second ?: 0) - 1)
     }
 
     fun plus() {
-        items.value = items.value?.plus(JebiItem(icons[items.value!!.size]))
+        param.value = Pair(2, (param.value?.second ?: 0) + 1)
     }
 
     fun select(index: Int) {
         items.value = items.value?.mapIndexed { index2, item ->
             if (index == index2) {
-                JebiItem(item.icon, true).apply {
+                JebiItem(item.icon, item.winning, true).apply {
                     this@JebiViewModel.selected.value = this
                 }
             } else item
@@ -45,7 +69,7 @@ class JebiViewModel : ViewModel() {
 
     fun confirm() {
         selected.value = selected.value?.apply {
-            result = if (Random(System.currentTimeMillis()).nextBoolean()) "통과" else "꽝"
+            result = if (this.winning) "꽝" else "통과"
         }
     }
 

@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.maro.luckyme.R
 import com.maro.luckyme.databinding.JebiFragmentBinding
 
 class JebiFragment : Fragment() {
@@ -25,20 +24,7 @@ class JebiFragment : Fragment() {
 
         binding = JebiFragmentBinding.inflate(inflater, null, false).apply {
             viewModel = this@JebiFragment.viewModel.apply {
-                items.value = listOf(
-                    JebiItem(R.drawable.ic_rat),
-                    JebiItem(R.drawable.ic_cow),
-                    JebiItem(R.drawable.ic_tiger),
-                    JebiItem(R.drawable.ic_rabbit),
-                    JebiItem(R.drawable.ic_dragon),
-                    JebiItem(R.drawable.ic_snake),
-                    JebiItem(R.drawable.ic_horse),
-                    JebiItem(R.drawable.ic_sheep),
-                    JebiItem(R.drawable.ic_monkey),
-                    JebiItem(R.drawable.ic_chicken),
-                    JebiItem(R.drawable.ic_dog),
-                    JebiItem(R.drawable.ic_pig)
-                )
+                param.value = Pair(2, 12) // 임의 지정
             }
             lifecycleOwner = this@JebiFragment
         }

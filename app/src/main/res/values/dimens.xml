@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="dp8">8dp</dimen>
+
+    <!-- 사다리 -->
+    <dimen name="sadari_stroke_width">4dp</dimen>
+    <dimen name="sadari_player_width">40dp</dimen>
+    <dimen name="sadari_player_width_s">28dp</dimen>
+    <dimen name="sadari_gap_height">20dp</dimen>
+    <!-- 가로 간격 -->
+    <dimen name="sadari_space_width">48dp</dimen>
+</resources>

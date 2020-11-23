@@ -184,15 +184,15 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="@dimen/jebi_horizontal_margin"
-                app:goneUnless="@{viewModel.items.size() > 2}"
-                app:invisibleUnless="@{viewModel.items.size() > 2 &amp;&amp; !viewModel.items.get(2).selected}"
-                app:item="@{viewModel.items.size() > 2 ? viewModel.items.get(2) : null}"
+                app:goneUnless="@{viewModel.items.size() > 4}"
+                app:invisibleUnless="@{viewModel.items.size() > 4 &amp;&amp; !viewModel.items.get(4).selected}"
+                app:item="@{viewModel.items.size() > 4 ? viewModel.items.get(4) : null}"
                 app:layout_constraintBottom_toBottomOf="@id/item_0"
                 app:layout_constraintDimensionRatio="3:4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/item_1"
                 app:layout_constraintTop_toTopOf="@id/item_0"
-                app:onClick="@{(view) -> viewModel.select(2)}" />
+                app:onClick="@{(view) -> viewModel.select(4)}" />
 
             <!-- 2열 -->
             <include
@@ -201,15 +201,15 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/jebi_vertical_margin"
-                app:goneUnless="@{viewModel.items.size() > 3}"
-                app:invisibleUnless="@{viewModel.items.size() > 3 &amp;&amp; !viewModel.items.get(3).selected}"
-                app:item="@{viewModel.items.size() > 3 ? viewModel.items.get(3) : null}"
+                app:goneUnless="@{viewModel.items.size() > 2}"
+                app:invisibleUnless="@{viewModel.items.size() > 2 &amp;&amp; !viewModel.items.get(2).selected}"
+                app:item="@{viewModel.items.size() > 2 ? viewModel.items.get(2) : null}"
                 app:layout_constraintBottom_toTopOf="@id/item_6"
                 app:layout_constraintDimensionRatio="3:4"
                 app:layout_constraintEnd_toStartOf="@id/item_4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/item_0"
-                app:onClick="@{(view) -> viewModel.select(3)}" />
+                app:onClick="@{(view) -> viewModel.select(2)}" />
 
             <include
                 android:id="@+id/item_4"
@@ -217,15 +217,15 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="@dimen/jebi_horizontal_margin"
-                app:goneUnless="@{viewModel.items.size() > 4}"
-                app:invisibleUnless="@{viewModel.items.size() > 4 &amp;&amp; !viewModel.items.get(4).selected}"
-                app:item="@{viewModel.items.size() > 4 ? viewModel.items.get(4) : null}"
+                app:goneUnless="@{viewModel.items.size() > 3}"
+                app:invisibleUnless="@{viewModel.items.size() > 3 &amp;&amp; !viewModel.items.get(3).selected}"
+                app:item="@{viewModel.items.size() > 3 ? viewModel.items.get(3) : null}"
                 app:layout_constraintBottom_toBottomOf="@id/item_3"
                 app:layout_constraintDimensionRatio="3:4"
                 app:layout_constraintEnd_toStartOf="@id/item_5"
                 app:layout_constraintStart_toEndOf="@id/item_3"
                 app:layout_constraintTop_toTopOf="@id/item_3"
-                app:onClick="@{(view) -> viewModel.select(4)}" />
+                app:onClick="@{(view) -> viewModel.select(3)}" />
 
             <include
                 android:id="@+id/item_5"

@@ -31,36 +31,108 @@
             android:layout_height="50dp"
             app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnMinus"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:enabled="@{viewModel.items.size() &gt; 2}"
-                android:onClick="@{(view) -> viewModel.minus()}"
-                android:text="-"
+            <!-- 인원수 -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCount1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="인원수"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnMinus"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnMinus"
+                android:layout_width="30dp"
+                android:layout_height="50dp"
+                android:enabled="@{viewModel.items.size() &gt; 2 &amp;&amp; viewModel.items.size() &gt; viewModel.winnings.size()}"
+                android:onClick="@{(view) -> viewModel.minusTotal()}"
+                android:text="-"
+                app:layout_constraintEnd_toStartOf="@id/tvCount2"
+                app:layout_constraintStart_toEndOf="@id/tvCount1"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvCount"
+                android:id="@+id/tvCount2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="@{String.valueOf(viewModel.items.size())}"
+                android:text='@{String.format("%d명", viewModel.items.size())}'
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnPlus"
                 app:layout_constraintStart_toEndOf="@id/btnMinus"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="12" />
+                tools:text="12명" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnPlus"
-                android:layout_width="50dp"
+                android:layout_width="30dp"
+                android:layout_height="50dp"
+                android:enabled="@{viewModel.items.size() &lt; 12}"
+                android:onClick="@{(view) -> viewModel.plusTotal()}"
+                android:text="+"
+                app:layout_constraintEnd_toStartOf="@id/tvCount21"
+                app:layout_constraintStart_toEndOf="@id/tvCount2"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- 꽝 개수 -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCount21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="꽝 개수"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnMinus2"
+                app:layout_constraintStart_toEndOf="@id/btnPlus"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnMinus2"
+                android:layout_width="30dp"
+                android:layout_height="50dp"
+                android:enabled="@{viewModel.winnings.size() &gt; 1}"
+                android:onClick="@{(view) -> viewModel.minusWinning()}"
+                android:text="-"
+                app:layout_constraintEnd_toStartOf="@id/tvCount22"
+                app:layout_constraintStart_toEndOf="@id/tvCount21"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvCount22"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{String.format("%d명", viewModel.winnings.size())}'
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnPlus2"
+                app:layout_constraintStart_toEndOf="@id/btnMinus2"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="12명" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnPlus2"
+                android:layout_width="30dp"
+                android:layout_height="50dp"
+                android:enabled="@{viewModel.winnings.size() &lt; viewModel.items.size()}"
+                android:onClick="@{(view) -> viewModel.plusWinning()}"
+                android:text="+"
+                app:layout_constraintEnd_toStartOf="@id/btnRefresh"
+                app:layout_constraintStart_toEndOf="@id/tvCount22"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- 재배치 -->
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnRefresh"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginStart="16dp"
-                android:enabled="@{viewModel.items.size() &lt; 12}"
-                android:onClick="@{(view) -> viewModel.plus()}"
-                android:text="+"
-                app:layout_constraintStart_toEndOf="@id/tvCount"
+                android:onClick="@{(view) -> viewModel.refresh()}"
+                android:src="@drawable/ic_refresh"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnPlus2"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.maro.luckyme.R
 import com.maro.luckyme.data.common.CommonData
 import com.maro.luckyme.domain.jebi.GetJebiParam
 import com.maro.luckyme.domain.jebi.GetJebiUseCase
@@ -18,23 +17,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class JebiViewModel : ViewModel() {
-
-    companion object {
-        val icons = listOf(
-            R.drawable.ic_rat,
-            R.drawable.ic_cow,
-            R.drawable.ic_tiger,
-            R.drawable.ic_rabbit,
-            R.drawable.ic_dragon,
-            R.drawable.ic_snake,
-            R.drawable.ic_horse,
-            R.drawable.ic_sheep,
-            R.drawable.ic_monkey,
-            R.drawable.ic_chicken,
-            R.drawable.ic_dog,
-            R.drawable.ic_pig
-        )
-    }
 
     private val getJebiUseCase = GetJebiUseCase(Dispatchers.IO)
     private val getJebiFlowUseCase = GetJebiFlowUseCase(Dispatchers.IO)
@@ -51,6 +33,7 @@ class JebiViewModel : ViewModel() {
     var paramFlow: Pair<Int, Int>? = null
     // 결과
     val items = MediatorLiveData<List<JebiItem>>()
+    val winnings = map(items) { items -> items.filter { it.winning } }
     val selected = MutableLiveData<JebiItem>()
 
     init {
@@ -101,31 +84,25 @@ class JebiViewModel : ViewModel() {
         }
     }
 
-    fun minus() = when {
-        paramFlow != null -> { // Flow 버전
-            initFlow(paramFlow!!.first, paramFlow!!.second - 1)
-            paramFlow = Pair(paramFlow!!.first, paramFlow!!.second - 1)
-        }
-        paramCoroutine != null -> { // Coroutine 버전
-            initCoroutine(paramCoroutine!!.first, paramCoroutine!!.second - 1)
-            paramCoroutine = Pair(paramCoroutine!!.first, paramCoroutine!!.second - 1)
-        }
-        else -> { // 밋밋한 버전
-            param.value = Pair(2, (param.value?.second ?: 0) - 1)
-        }
-    }
+    fun refresh() = diff()
 
-    fun plus() = when {
+    fun minusTotal() = diff(total = -1)
+
+    fun plusTotal() = diff(total = 1)
+
+    fun minusWinning() = diff(winning = -1)
+
+    fun plusWinning() = diff(winning = 1)
+
+    fun diff(winning: Int? = null, total: Int? = null): Any = when {
         paramFlow != null -> { // Flow 버전
-            initFlow(paramFlow!!.first, paramFlow!!.second + 1)
-            paramFlow = Pair(paramFlow!!.first, paramFlow!!.second + 1)
+            initFlow(paramFlow!!.first + (winning ?: 0), paramFlow!!.second + (total ?: 0))
         }
         paramCoroutine != null -> { // Coroutine 버전
-            initCoroutine(paramCoroutine!!.first, paramCoroutine!!.second + 1)
-            paramCoroutine = Pair(paramCoroutine!!.first, paramCoroutine!!.second + 1)
+            initCoroutine(paramCoroutine!!.first + (winning ?: 0), paramCoroutine!!.second + (total ?: 0))
         }
         else -> { // 밋밋한 버전
-            param.value = Pair(2, (param.value?.second ?: 0) + 1)
+            param.value = Pair(param.value!!.first + (winning ?: 0), param.value!!.second + (total ?: 0))
         }
     }
 

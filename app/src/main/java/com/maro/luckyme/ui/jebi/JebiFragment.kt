@@ -11,6 +11,9 @@ import com.maro.luckyme.databinding.JebiFragmentBinding
 class JebiFragment : Fragment() {
 
     companion object {
+        private const val DEFAULT_TOTAL= 4 // 기본 인원수
+        private const val DEFAULT_WINNING = 2 // 기본 꽝 개수
+
         fun newInstance() = JebiFragment()
     }
 
@@ -24,9 +27,9 @@ class JebiFragment : Fragment() {
 
         binding = JebiFragmentBinding.inflate(inflater, null, false).apply {
             viewModel = this@JebiFragment.viewModel.apply {
-                // initPlain(2, 12) // 밋밋한 버전. 임의 지정
-                // initCoroutine(2, 12) // 코루틴 버전
-                initFlow(2, 12) // Flow 버전
+                // initPlain(DEFAULT_WINNING, DEFAULT_TOTAL) // 밋밋한 버전. 임의 지정
+                // initCoroutine(DEFAULT_WINNING, DEFAULT_TOTAL) // 코루틴 버전
+                initFlow(DEFAULT_WINNING, DEFAULT_TOTAL) // Flow 버전
             }
             lifecycleOwner = this@JebiFragment
         }

@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="com.maro.luckyme.BuildConfig" />
+
         <import type="androidx.core.content.ContextCompat" />
 
         <variable
@@ -63,6 +65,24 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="꽝"
                 tools:visibility="gone" />
+
+            <!-- DEBUG -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@{safeUnbox(item.winning) ? @color/amber_500  : @color/blue_500}"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="4dp"
+                android:text='@{safeUnbox(item.winning) ? "꽝" : "통과"}'
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                app:goneUnless="@{safeUnbox(BuildConfig.DEBUG)}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@color/blue_500"
+                tools:text="꽝" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </layout>

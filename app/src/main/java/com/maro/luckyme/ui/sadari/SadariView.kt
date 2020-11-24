@@ -5,7 +5,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
-import android.view.MotionEvent.ACTION_DOWN
+import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
@@ -17,7 +17,7 @@ import java.util.*
 
 
 //
-//@ 한칸에 최소 2개로 잡으니까 
+//@ 한칸에 최소 2개로 ø잡으니까 
 // 최소값은 :  ((인원수 -1) * 2)
 // 최대값은 :  ((인원수 -1) * 4)
 
@@ -38,6 +38,11 @@ val DIRECTION_RIGHT = 1
 
 class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
     val TAG = SadariView::class.simpleName
+
+    var MARGIN = resources.getDimensionPixelSize(R.dimen.dp16)
+
+    val DEFAULT_PLAYER_COUNT = 4
+    val DEFAULT_BOMB_COUNT = 1
 
     val CELL_WIDTH = resources.getDimensionPixelSize(R.dimen.sadari_cell_width)
     val CELL_HEIGHT = resources.getDimensionPixelSize(R.dimen.sadari_cell_height)
@@ -63,70 +68,96 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         add(VectorDrawableCompat.create(resources, R.drawable.ic_snake, null)!!)
         add(VectorDrawableCompat.create(resources, R.drawable.ic_tiger, null)!!)
     }
+
+    val PLAYER_HIT_LIST = mutableListOf<VectorDrawableCompat>().apply {
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_dog, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_chicken, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_cow, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_dragon, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_horse, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_monkey, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_pig, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_rabbit, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_rat, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_sheep, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_snake, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_tiger, null)!!)
+    }
+
     val STROKE_WIDTH = resources.getDimensionPixelSize(R.dimen.sadari_stroke_width)
 
 
-//    val PLAYER_WIDTH: Int by lazy {
-//        context.resources.getDimensionPixelSize(R.dimen.sadari_player_width)
-//    }
+    var playerCount: Int = DEFAULT_PLAYER_COUNT
+    var bombCount: Int = DEFAULT_BOMB_COUNT
 
+    lateinit var paint: Paint
+    lateinit var animPaint: Paint
+    lateinit var hitPaint: Paint
 
-    var playerCount: Int? = null
-    var bombCount: Int? = null
-
-    var paint: Paint? = null
-    var paint2: Paint? = null
-
-    var sadari: LinkedList<Stream>? = null
+    lateinit var sadari: LinkedList<Stream>
+    lateinit var bombIndexList: List<Int>
 
     // 애니메이션 처리
     var pathMeasure: PathMeasure? = null
-    var pathMatrix: Matrix? = null
+    var _matrix: Matrix? = null
     var animPath: Path = Path()
     var curIcon: VectorDrawableCompat? = null
-    var curX: Float? = null
-    var curY: Float? = null
+    var curX: Float = 0f
+    var curY: Float = 0f
     var distance: Float? = null // distance moved
     var pos: FloatArray = FloatArray(2)
     var tan: FloatArray = FloatArray(2)
 
     init {
+        initAttr(attrs, defStyleAttr)
         initView()
+
+        play()
+    }
+
+    private fun initAttr(attrs: AttributeSet?, defStyleAttr:Int) {
+        context.theme.obtainStyledAttributes(attrs, R.styleable.SadariView, defStyleAttr, 0).apply {
+            try {
+                playerCount = getInt(R.styleable.SadariView_playerCount, DEFAULT_PLAYER_COUNT)
+                bombCount = getInt(R.styleable.SadariView_bombCount, DEFAULT_BOMB_COUNT)
+            }
+            finally {
+                recycle()
+            }
+        }
     }
 
     private fun initView() {
-        pathMatrix = Matrix()
+        _matrix = Matrix()
 
-        paint = Paint()
-        paint?.setColor(ContextCompat.getColor(context, R.color.indigo_200))
-        paint?.strokeWidth = STROKE_WIDTH.toFloat()
+        paint = Paint().apply {
+            color = ContextCompat.getColor(context, R.color.indigo_200)
+            strokeWidth = STROKE_WIDTH.toFloat()
+            style = Paint.Style.FILL
+        }
 
-        paint2 = Paint()
-        paint2?.setColor(ContextCompat.getColor(context, R.color.teal_200))
-        paint2?.strokeWidth = STROKE_WIDTH.toFloat()
+        animPaint = Paint().apply {
+            color = ContextCompat.getColor(context, R.color.teal_200)
+            strokeWidth = STROKE_WIDTH.toFloat()
+            style = Paint.Style.STROKE
+            strokeJoin = Paint.Join.BEVEL
+            strokeCap = Paint.Cap.SQUARE
+        }
 
-        setData(6, 1)
+        hitPaint = Paint().apply {
+            color = ContextCompat.getColor(context, R.color.white)
+            style = Paint.Style.FILL
+            textSize = resources.getDimensionPixelSize(R.dimen.dp12).toFloat()
+        }
 
         setOnTouchListener { v, event ->
             processTouchEvent(v, event)
         }
     }
 
-    fun setData(playerCount: Int, bombCount: Int) {
-        this@SadariView.playerCount = playerCount
-        this@SadariView.bombCount = bombCount
-
-//        var branchCount = DataHelper.makeBranchCount(playerCount)
-
-//        mutableListOf<Stream>().apply {
-//            for (i in 1..playerCount) {
-//                add(
-//                    Stream()
-//                )
-//            }
-//        }
-
+    fun play() {
         sadari = DataHelper.makeSadariData(playerCount)
+        bombIndexList = DataHelper.makeBombIndexList(playerCount, bombCount)
         invalidate()
     }
 
@@ -150,14 +181,15 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     private fun drawSadari(canvas: Canvas) {
-        var sadariStartX = (PLAYER_WIDTH / 2).toFloat()
+
+        var sadariStartX = (PLAYER_WIDTH / 2).toFloat() + MARGIN
         var sadariStartY = PLAYER_WIDTH + resources.getDimensionPixelSize(R.dimen.dp8).toFloat()
         var sadariEndY = sadariStartY + KKODARI + CELL_HEIGHT * VERTICAL_COUNT + KKODARI
 
         sadari?.forEachIndexed { index, stream ->
             // 세로선
             var x = sadariStartX + CELL_WIDTH * index
-            canvas?.drawLine(x, sadariStartY, x, sadariEndY, paint!!)
+            canvas?.drawLine(x, sadariStartY, x, sadariEndY, paint)
 
             // 가로선
             stream.branchList?.forEach { branch ->
@@ -167,7 +199,7 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                     var y = sadariStartY + KKODARI + branch.position * CELL_HEIGHT
                     var startX = sadariStartX + index * CELL_WIDTH
                     var endX = startX + CELL_WIDTH
-                    canvas?.drawLine(startX, y, endX, y, paint!!)
+                    canvas?.drawLine(startX, y, endX, y, paint)
                 }
             }
         }
@@ -176,8 +208,8 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     var clicked = false
 
     private fun drawPlayer(canvas: Canvas) {
-        for (i in 0..playerCount!! - 1) {
-            var x = CELL_WIDTH * i
+        for (i in 0..playerCount - 1) {
+            var x = CELL_WIDTH * i + MARGIN
             PLAYER_LIST[i].apply {
                 setBounds(x, 0, x + PLAYER_WIDTH, PLAYER_WIDTH)
                 draw(canvas)
@@ -188,11 +220,26 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private fun drawHitAndMiss(canvas: Canvas) {
         var sadariStartY = PLAYER_WIDTH + resources.getDimensionPixelSize(R.dimen.dp8).toFloat()
         var sadariEndY = sadariStartY + KKODARI + CELL_HEIGHT * VERTICAL_COUNT + KKODARI
-        for (i in 0..playerCount!! - 1) {
-            var x = (CELL_WIDTH * i).toFloat()
 
-            canvas.drawCircle(x+50f, sadariEndY+100f, 50f, paint2!!)
+        for (i in 0..playerCount - 1) {
+            var x = (CELL_WIDTH * i).toFloat() + MARGIN
+
+            canvas.drawCircle(x+50f, sadariEndY+50f+30f, 50f, paint)
+            if (bombIndexList.contains(i)) {
+                canvas.drawText("꽝", x+32, sadariEndY+50f+35, hitPaint)
+            } else {
+                canvas.drawText("통과", x+20, sadariEndY+50f+35, hitPaint)
+            }
+
         }
+
+//        for (i in 0..playerCount - 1) {
+//            var x = CELL_WIDTH * i + MARGIN
+//            PLAYER_HIT_LIST[i].apply {
+//                setBounds(x, sadariEndY.toInt(), x + PLAYER_WIDTH_SMALL, sadariEndY.toInt() + PLAYER_WIDTH_SMALL)
+//                draw(canvas)
+//            }
+//        }
     }
 
     private fun drawPath(canvas: Canvas) {
@@ -200,30 +247,30 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             return
         }
 
-        pathMatrix?.reset()
+        _matrix?.reset()
 
         pathMeasure?.getPosTan(distance!!, pos, tan)
-        curX = pos!![0] - PLAYER_WIDTH_SMALL / 2
-        curY = pos!![1] - PLAYER_WIDTH_SMALL / 2
-        pathMatrix?.postTranslate(curX!!, curY!!)
+        curX = pos[0] - PLAYER_WIDTH_SMALL / 2 + MARGIN
+        curY = pos[1] - PLAYER_WIDTH_SMALL / 2
+        _matrix?.postTranslate(curX!!, curY!!)
         if (distance == 0f) {
-            animPath.moveTo(pos[0], pos[1])
-            Log.e(TAG, "pos0=${pos[0]}, pos1=${pos[1]}")
+            animPath.moveTo(pos[0] + MARGIN, pos[1])
         } else {
-            animPath.lineTo(pos[0], pos[1])
-            Log.e(TAG, "pos0=${pos[0]}, pos1=${pos[1]}")
+            animPath.lineTo(pos[0] + MARGIN, pos[1])
         }
+        Log.e("XXX", "===> animPath=${animPath.isEmpty}")
 
-        curIcon?.setBounds(curX?.toInt()!!, curY?.toInt()!!, curX?.toInt()!!+PLAYER_WIDTH_SMALL, curY?.toInt()!!+PLAYER_WIDTH_SMALL)
+        canvas.drawPath(animPath, animPaint)
+        curIcon?.setBounds(curX.toInt(), curY.toInt(), curX.toInt()+PLAYER_WIDTH_SMALL, curY.toInt()+PLAYER_WIDTH_SMALL)
         curIcon?.draw(canvas)
-        canvas.drawPath(animPath, paint2!!)
+
 
         distance = distance!! + STEP
         invalidate()
     }
 
     private fun processTouchEvent(v: View, event: MotionEvent): Boolean {
-        if (event.action == ACTION_DOWN) {
+        if (event.action == ACTION_UP) {
             PLAYER_LIST.forEachIndexed { index, player ->
                 if (player.bounds.left <= event.x && player.bounds.right >= event.x
                         && player.bounds.top <= event.y && player.bounds.bottom >= event.y) {
@@ -231,7 +278,7 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
                     clicked = true
 
-                    pathMeasure = PathMeasure(branchToPath(DataHelper.getPlayerPathList(sadari!!, index), index), false)
+                    pathMeasure = PathMeasure(branchToPath(DataHelper.getPlayerPathList(sadari, index), index), false)
                     pathMeasure?.length
 
                     // XXX 코드 정리
@@ -240,11 +287,10 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                     animPath?.reset()
 
                     invalidate()
-                    return true
                 }
             }
         }
-        return false
+        return true
     }
 
     private fun branchToPath(branchList: List<Branch>, playerIndex: Int): Path {

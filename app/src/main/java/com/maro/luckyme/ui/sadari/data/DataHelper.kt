@@ -1,8 +1,6 @@
 package com.maro.luckyme.ui.sadari.data
 
-import android.graphics.Path
 import com.maro.luckyme.ui.sadari.*
-import kotlinx.coroutines.coroutineScope
 import java.util.*
 
 object DataHelper {
@@ -22,6 +20,22 @@ object DataHelper {
         sort(sadari)
 
         return sadari
+    }
+
+    fun makeBombIndexList(playerCount: Int, bombCount: Int): List<Int> {
+        var bombIndexList = arrayListOf<Int>()
+        for (i in 0..playerCount-1) {
+            var index = Random().nextInt(playerCount)
+            if (!bombIndexList.contains(index)) {
+                bombIndexList.add(index)
+
+                if (bombIndexList.size == bombCount) {
+                    break
+                }
+            }
+        }
+
+        return bombIndexList
     }
 
     fun getPlayerPathList(sadari: LinkedList<Stream>, playerIndex: Int): List<Branch> {

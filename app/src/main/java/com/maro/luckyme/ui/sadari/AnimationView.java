@@ -97,6 +97,7 @@ public class AnimationView extends View {
             animPath2.moveTo(pos[0], pos[1]);
         } else {
             animPath2.lineTo(pos[0], pos[1]);
+            Log.e("XXX", "pos0="+ pos[0] +", pos1="+pos[1]);
         }
 
         canvas.drawPath(animPath2, paint2);
@@ -104,7 +105,6 @@ public class AnimationView extends View {
 
         distance += step;
         invalidate();
-
     }
 
     @Override

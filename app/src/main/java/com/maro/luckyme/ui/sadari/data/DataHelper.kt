@@ -1,6 +1,10 @@
 package com.maro.luckyme.ui.sadari.data
 
-import com.maro.luckyme.ui.sadari.*
+import com.maro.luckyme.ui.sadari.data.Constants.DIRECTION_LEFT
+import com.maro.luckyme.ui.sadari.data.Constants.DIRECTION_RIGHT
+import com.maro.luckyme.ui.sadari.data.Constants.MAX_BRANCH_COUNT
+import com.maro.luckyme.ui.sadari.data.Constants.MIN_BRANCH_COUNT
+import com.maro.luckyme.ui.sadari.data.Constants.TOTAL_BRANCH_COUNT
 import java.util.*
 
 object DataHelper {
@@ -84,7 +88,7 @@ object DataHelper {
 
         while (true) {
             // position 0부터 시작
-            var position = Random().nextInt(VERTICAL_COUNT)
+            var position = Random().nextInt(TOTAL_BRANCH_COUNT)
             if (checkDuplication(position, leftStream.branchList)) {
                 continue
             }

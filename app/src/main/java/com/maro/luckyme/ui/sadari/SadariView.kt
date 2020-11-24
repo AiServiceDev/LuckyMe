@@ -11,23 +11,19 @@ import androidx.core.content.ContextCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.maro.luckyme.R
 import com.maro.luckyme.ui.sadari.data.Branch
+import com.maro.luckyme.ui.sadari.data.Constants
+import com.maro.luckyme.ui.sadari.data.Constants.DEFAULT_BOMB_COUNT
+import com.maro.luckyme.ui.sadari.data.Constants.DEFAULT_PLAYER_COUNT
+import com.maro.luckyme.ui.sadari.data.Constants.DIRECTION_RIGHT
+import com.maro.luckyme.ui.sadari.data.Constants.SPEED
+import com.maro.luckyme.ui.sadari.data.Constants.TOTAL_BRANCH_COUNT
 import com.maro.luckyme.ui.sadari.data.DataHelper
 import com.maro.luckyme.ui.sadari.data.Stream
 import java.util.*
 
 
-//
-//@ 한칸에 최소 2개로 ø잡으니까 
-// 최소값은 :  ((인원수 -1) * 2)
-// 최대값은 :  ((인원수 -1) * 4)
-
-val MIN_BRANCH_COUNT = 2
-val MAX_BRANCH_COUNT = 4
-val VERTICAL_COUNT = 10
-val DIRECTION_LEFT = 0
-val DIRECTION_RIGHT = 1
-
 /**
+ *  KKODARI는 사다리 최상단, 최하단 부분을 뜻함
  *
  * |  |  | <= KKODARI
  * |--|  |
@@ -39,17 +35,13 @@ val DIRECTION_RIGHT = 1
 class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
     val TAG = SadariView::class.simpleName
 
-    var MARGIN = resources.getDimensionPixelSize(R.dimen.dp16)
-
-    val DEFAULT_PLAYER_COUNT = 4
-    val DEFAULT_BOMB_COUNT = 1
+    val DP16 = resources.getDimensionPixelSize(R.dimen.dp16)
+    val DP8 = resources.getDimensionPixelSize(R.dimen.dp8)
+    val DP20 = resources.getDimensionPixelSize(R.dimen.dp20)
 
     val CELL_WIDTH = resources.getDimensionPixelSize(R.dimen.sadari_cell_width)
     val CELL_HEIGHT = resources.getDimensionPixelSize(R.dimen.sadari_cell_height)
 
-    val MIN_PLAYER_COUNT = 2
-    val MAX_PLAYER_COUNT = 12
-    val STEP = 10
     val KKODARI = CELL_HEIGHT * 2 // 상,하 사다리 여분
 
     val PLAYER_WIDTH = resources.getDimensionPixelSize(R.dimen.sadari_player_width)
@@ -99,11 +91,12 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         add(R.color.tiger)
     }
 
-    val STROKE_WIDTH = resources.getDimensionPixelSize(R.dimen.sadari_stroke_width)
-
+    val STROKE_WIDTH = resources.getDimensionPixelSize(Constants.STROKE_WIDTH)
 
     var playerCount: Int = DEFAULT_PLAYER_COUNT
     var bombCount: Int = DEFAULT_BOMB_COUNT
+
+    var viewStartX = 0 // view의 시작 위치
 
     lateinit var paint: Paint
     lateinit var animPaint: Paint
@@ -114,13 +107,10 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     var playerResultMap: MutableMap<Int, PlayerResult> = mutableMapOf()
 
     // 애니메이션 처리
-    var pathMeasure: PathMeasure? = null
-    var _matrix: Matrix? = null
+    var _matrix: Matrix = Matrix()
     var animPath: Path = Path()
-    var curIcon: VectorDrawableCompat? = null
     var curX: Float = 0f
     var curY: Float = 0f
-    var distance: Float? = null // distance moved
     var pos: FloatArray = FloatArray(2)
     var tan: FloatArray = FloatArray(2)
 
@@ -143,8 +133,6 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     private fun initView() {
-        _matrix = Matrix()
-
         paint = Paint().apply {
             color = ContextCompat.getColor(context, R.color.indigo_200)
             strokeWidth = STROKE_WIDTH.toFloat()
@@ -178,8 +166,22 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        var point = Point()
+        display.getSize(point)
 
-        setMeasuredDimension(1800, (2 * KKODARI + VERTICAL_COUNT * CELL_HEIGHT + 500).toInt())
+        // Width
+        var width = CELL_WIDTH * playerCount + DP16 + DP16
+        if (point.x > width) {
+            viewStartX = (point.x - width) / 2 + DP16
+            width = point.x
+        } else {
+            viewStartX = DP16
+        }
+
+        // Height
+        var height = PLAYER_WIDTH + DP8 + KKODARI + CELL_HEIGHT * TOTAL_BRANCH_COUNT + KKODARI + DP8 + DP20 * 2 + DP8
+
+        setMeasuredDimension(width, height)
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -190,16 +192,15 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 drawSadari(canvas)
                 drawPlayer(canvas)
                 drawHitAndMiss(canvas)
-                drawPath(canvas)
+                drawAnimPath(canvas)
             }
         }
     }
 
     private fun drawSadari(canvas: Canvas) {
-
-        var sadariStartX = (PLAYER_WIDTH / 2).toFloat() + MARGIN
-        var sadariStartY = PLAYER_WIDTH + resources.getDimensionPixelSize(R.dimen.dp8).toFloat()
-        var sadariEndY = sadariStartY + KKODARI + CELL_HEIGHT * VERTICAL_COUNT + KKODARI
+        var sadariStartX = viewStartX + (PLAYER_WIDTH / 2).toFloat()
+        var sadariStartY = (PLAYER_WIDTH + DP8).toFloat()
+        var sadariEndY = sadariStartY + KKODARI + CELL_HEIGHT * TOTAL_BRANCH_COUNT + KKODARI
 
         sadari?.forEachIndexed { index, stream ->
             // 세로선
@@ -220,11 +221,9 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
     }
 
-    var clicked = false
-
     private fun drawPlayer(canvas: Canvas) {
         for (i in 0..playerCount - 1) {
-            var x = CELL_WIDTH * i + MARGIN
+            var x = viewStartX + CELL_WIDTH * i
             PLAYER_LIST[i].apply {
                 setBounds(x, 0, x + PLAYER_WIDTH, PLAYER_WIDTH)
                 draw(canvas)
@@ -233,38 +232,38 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     }
 
     private fun drawHitAndMiss(canvas: Canvas) {
-        var sadariStartY = PLAYER_WIDTH + resources.getDimensionPixelSize(R.dimen.dp8).toFloat()
-        var sadariEndY = sadariStartY + KKODARI + CELL_HEIGHT * VERTICAL_COUNT + KKODARI
+        var sadariStartY = PLAYER_WIDTH + DP8
+        var sadariEndY = sadariStartY + KKODARI + CELL_HEIGHT * TOTAL_BRANCH_COUNT + KKODARI
 
         for (i in 0..playerCount - 1) {
-            var x = (CELL_WIDTH * i).toFloat() + MARGIN
+            var x = viewStartX + (CELL_WIDTH * i).toFloat()
 
-            canvas.drawCircle(x + 50f, sadariEndY + 50f + 30f, 50f, paint)
+            canvas.drawCircle(x + DP20.toFloat(), sadariEndY + DP20.toFloat() + DP8, DP20.toFloat(), paint)
             if (bombIndexList.contains(i)) {
-                canvas.drawText("꽝", x + 32, sadariEndY + 50f + 35, hitPaint)
+                canvas.drawText("꽝", x + 34, sadariEndY + DP20.toFloat() + 34, hitPaint)
             } else {
-                canvas.drawText("통과", x + 20, sadariEndY + 50f + 35, hitPaint)
+                canvas.drawText("통과", x + 22, sadariEndY + DP20.toFloat() + 34, hitPaint)
             }
 
         }
     }
 
-    private fun drawPath(canvas: Canvas) {
-        if (clicked == false) {
+    private fun drawAnimPath(canvas: Canvas) {
+        if (playerResultMap.isEmpty()) {
             return
         }
 
-        _matrix?.reset()
+        _matrix.reset()
 
         for ((index, playerResult) in playerResultMap) {
             playerResult.pathMeasure?.getPosTan(playerResult.distance!!, pos, tan)
-            curX = pos[0] - PLAYER_WIDTH_SMALL / 2 + MARGIN
+            curX = viewStartX + pos[0] - PLAYER_WIDTH_SMALL / 2
             curY = pos[1] - PLAYER_WIDTH_SMALL / 2
-            _matrix?.postTranslate(curX!!, curY!!)
+            _matrix.postTranslate(curX!!, curY!!)
             if (playerResult.distance == 0f) {
-                playerResult.animPath.moveTo(pos[0] + MARGIN, pos[1])
+                playerResult.animPath.moveTo(viewStartX + pos[0], pos[1])
             } else {
-                playerResult.animPath.lineTo(pos[0] + MARGIN, pos[1])
+                playerResult.animPath.lineTo(viewStartX + pos[0], pos[1])
             }
             Log.e("XXX", "===> animPath=${animPath.isEmpty}")
 
@@ -275,7 +274,7 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 draw(canvas)
             }
 
-            playerResult.distance = playerResult.distance + STEP
+            playerResult.distance = playerResult.distance + SPEED
         }
 
         invalidate()
@@ -292,9 +291,6 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                                 PathMeasure(branchToPath(DataHelper.getPlayerPathList(sadari, index), index), false),
                                 PLAYER_HIT_LIST[index],
                         ))
-
-                        // XXX
-                        clicked = true
                     }
 
                     invalidate()
@@ -307,8 +303,8 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private fun branchToPath(branchList: List<Branch>, playerIndex: Int): Path {
         // XXX 중복 코드
         var sadariStartX = (PLAYER_WIDTH / 2).toFloat()
-        var sadariStartY = PLAYER_WIDTH + resources.getDimensionPixelSize(R.dimen.dp8).toFloat()
-        var sadariEndY = sadariStartY + KKODARI + CELL_HEIGHT * VERTICAL_COUNT + KKODARI
+        var sadariStartY = (PLAYER_WIDTH + DP8).toFloat()
+        var sadariEndY = sadariStartY + KKODARI + CELL_HEIGHT * TOTAL_BRANCH_COUNT + KKODARI
 
         var curX = sadariStartX + CELL_WIDTH * playerIndex
         var curY = sadariStartY
@@ -333,8 +329,8 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 }
 
 data class PlayerResult(
-        var pathMeasure: PathMeasure,
-        var icon: VectorDrawableCompat,
-        var distance: Float = 0f,
-        var animPath: Path = Path()
+    var pathMeasure: PathMeasure,
+    var icon: VectorDrawableCompat,
+    var distance: Float = 0f,
+    var animPath: Path = Path()
 )

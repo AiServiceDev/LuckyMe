@@ -9,4 +9,17 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="dog">#B77334</color>
+    <color name="chicken">#F05F49</color>
+    <color name="cow">#878787</color>
+    <color name="dragon">#31AC52</color>
+    <color name="horse">#EBB56A</color>
+    <color name="monkey">#B77334</color>
+    <color name="pig">#F599A0</color>
+    <color name="rabbit">#F9C7D0</color>
+    <color name="rat">#B3B3B3</color>
+    <color name="sheep">#E1D4BD</color>
+    <color name="snake">#B3CC42</color>
+    <color name="tiger">#FFC906</color>
 </resources>

@@ -35,7 +35,7 @@
                 <com.maro.luckyme.ui.sadari.SadariView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:playerCount="6"
+                    app:playerCount="12"
                     app:bombCount="2"
                     />
 

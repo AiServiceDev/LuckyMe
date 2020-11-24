@@ -84,6 +84,21 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         add(VectorDrawableCompat.create(resources, R.drawable.ic_tiger, null)!!)
     }
 
+    val COLOR_LIST = mutableListOf<Int>().apply {
+        add(R.color.dog)
+        add(R.color.chicken)
+        add(R.color.cow)
+        add(R.color.dragon)
+        add(R.color.horse)
+        add(R.color.monkey)
+        add(R.color.pig)
+        add(R.color.rabbit)
+        add(R.color.rat)
+        add(R.color.sheep)
+        add(R.color.snake)
+        add(R.color.tiger)
+    }
+
     val STROKE_WIDTH = resources.getDimensionPixelSize(R.dimen.sadari_stroke_width)
 
 
@@ -96,6 +111,7 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
     lateinit var sadari: LinkedList<Stream>
     lateinit var bombIndexList: List<Int>
+    var playerResultMap: MutableMap<Int, PlayerResult> = mutableMapOf()
 
     // 애니메이션 처리
     var pathMeasure: PathMeasure? = null
@@ -115,13 +131,12 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         play()
     }
 
-    private fun initAttr(attrs: AttributeSet?, defStyleAttr:Int) {
+    private fun initAttr(attrs: AttributeSet?, defStyleAttr: Int) {
         context.theme.obtainStyledAttributes(attrs, R.styleable.SadariView, defStyleAttr, 0).apply {
             try {
                 playerCount = getInt(R.styleable.SadariView_playerCount, DEFAULT_PLAYER_COUNT)
                 bombCount = getInt(R.styleable.SadariView_bombCount, DEFAULT_BOMB_COUNT)
-            }
-            finally {
+            } finally {
                 recycle()
             }
         }
@@ -164,7 +179,7 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
 
-        setMeasuredDimension(1200, (2 * KKODARI + VERTICAL_COUNT * CELL_HEIGHT + 500).toInt())
+        setMeasuredDimension(1800, (2 * KKODARI + VERTICAL_COUNT * CELL_HEIGHT + 500).toInt())
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -224,22 +239,14 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         for (i in 0..playerCount - 1) {
             var x = (CELL_WIDTH * i).toFloat() + MARGIN
 
-            canvas.drawCircle(x+50f, sadariEndY+50f+30f, 50f, paint)
+            canvas.drawCircle(x + 50f, sadariEndY + 50f + 30f, 50f, paint)
             if (bombIndexList.contains(i)) {
-                canvas.drawText("꽝", x+32, sadariEndY+50f+35, hitPaint)
+                canvas.drawText("꽝", x + 32, sadariEndY + 50f + 35, hitPaint)
             } else {
-                canvas.drawText("통과", x+20, sadariEndY+50f+35, hitPaint)
+                canvas.drawText("통과", x + 20, sadariEndY + 50f + 35, hitPaint)
             }
 
         }
-
-//        for (i in 0..playerCount - 1) {
-//            var x = CELL_WIDTH * i + MARGIN
-//            PLAYER_HIT_LIST[i].apply {
-//                setBounds(x, sadariEndY.toInt(), x + PLAYER_WIDTH_SMALL, sadariEndY.toInt() + PLAYER_WIDTH_SMALL)
-//                draw(canvas)
-//            }
-//        }
     }
 
     private fun drawPath(canvas: Canvas) {
@@ -249,23 +256,28 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
 
         _matrix?.reset()
 
-        pathMeasure?.getPosTan(distance!!, pos, tan)
-        curX = pos[0] - PLAYER_WIDTH_SMALL / 2 + MARGIN
-        curY = pos[1] - PLAYER_WIDTH_SMALL / 2
-        _matrix?.postTranslate(curX!!, curY!!)
-        if (distance == 0f) {
-            animPath.moveTo(pos[0] + MARGIN, pos[1])
-        } else {
-            animPath.lineTo(pos[0] + MARGIN, pos[1])
+        for ((index, playerResult) in playerResultMap) {
+            playerResult.pathMeasure?.getPosTan(playerResult.distance!!, pos, tan)
+            curX = pos[0] - PLAYER_WIDTH_SMALL / 2 + MARGIN
+            curY = pos[1] - PLAYER_WIDTH_SMALL / 2
+            _matrix?.postTranslate(curX!!, curY!!)
+            if (playerResult.distance == 0f) {
+                playerResult.animPath.moveTo(pos[0] + MARGIN, pos[1])
+            } else {
+                playerResult.animPath.lineTo(pos[0] + MARGIN, pos[1])
+            }
+            Log.e("XXX", "===> animPath=${animPath.isEmpty}")
+
+            animPaint.color = ContextCompat.getColor(context, COLOR_LIST[index])
+            canvas.drawPath(playerResult.animPath, animPaint)
+            playerResult.icon?.apply {
+                setBounds(curX.toInt(), curY.toInt(), curX.toInt() + PLAYER_WIDTH_SMALL, curY.toInt() + PLAYER_WIDTH_SMALL)
+                draw(canvas)
+            }
+
+            playerResult.distance = playerResult.distance + STEP
         }
-        Log.e("XXX", "===> animPath=${animPath.isEmpty}")
 
-        canvas.drawPath(animPath, animPaint)
-        curIcon?.setBounds(curX.toInt(), curY.toInt(), curX.toInt()+PLAYER_WIDTH_SMALL, curY.toInt()+PLAYER_WIDTH_SMALL)
-        curIcon?.draw(canvas)
-
-
-        distance = distance!! + STEP
         invalidate()
     }
 
@@ -274,17 +286,16 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             PLAYER_LIST.forEachIndexed { index, player ->
                 if (player.bounds.left <= event.x && player.bounds.right >= event.x
                         && player.bounds.top <= event.y && player.bounds.bottom >= event.y) {
-                    Log.d(TAG, "event.action=${event.action}, ${event.x}, ${event.y}")
 
-                    clicked = true
+                    if (!playerResultMap.containsKey(index)) {
+                        playerResultMap.put(index, PlayerResult(
+                                PathMeasure(branchToPath(DataHelper.getPlayerPathList(sadari, index), index), false),
+                                PLAYER_HIT_LIST[index],
+                        ))
 
-                    pathMeasure = PathMeasure(branchToPath(DataHelper.getPlayerPathList(sadari, index), index), false)
-                    pathMeasure?.length
-
-                    // XXX 코드 정리
-                    curIcon = player
-                    distance = 0f
-                    animPath?.reset()
+                        // XXX
+                        clicked = true
+                    }
 
                     invalidate()
                 }
@@ -320,3 +331,10 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         return path
     }
 }
+
+data class PlayerResult(
+        var pathMeasure: PathMeasure,
+        var icon: VectorDrawableCompat,
+        var distance: Float = 0f,
+        var animPath: Path = Path()
+)

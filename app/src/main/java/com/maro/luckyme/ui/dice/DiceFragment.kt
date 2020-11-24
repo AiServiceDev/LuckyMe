@@ -122,7 +122,7 @@ class DiceResultAdapter(
 
 object DiceResultAdapterDiffUtil : DiffUtil.ItemCallback<DiceUiData>() {
     override fun areItemsTheSame(oldItem: DiceUiData, newItem: DiceUiData): Boolean {
-        return oldItem == newItem && oldItem.viewType == newItem.viewType
+        return oldItem == newItem
     }
 
     override fun areContentsTheSame(oldItem: DiceUiData, newItem: DiceUiData): Boolean {

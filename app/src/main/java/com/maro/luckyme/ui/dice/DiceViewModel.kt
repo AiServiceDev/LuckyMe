@@ -50,30 +50,34 @@ class DiceViewModel : ViewModel() {
     val currentDataList = Transformations.map(currentDiceIndex) {
         if (it <= 0) return@map mutableListOf<DiceUiData>()
         var subList = resultDataList.value?.subList(0, it)
-        return@map if (gameRule.value == false) {
-            subList
-                ?.map { diceUiData ->
-                    diceUiData.viewType = VIEW_TYPE_NORMAL
-                    diceUiData
-                }
-                ?.sortedBy { diceUiData -> diceUiData.getSumResult() }
-                ?.take(penaltyWinningCount.value ?: 1)?.map { diceUiData ->
-                    diceUiData.viewType = VIEW_TYPE_PENALTY_WINNING
-                    diceUiData
-                }
-            subList
-        } else {
-            subList
-                ?.map { diceUiData ->
-                    diceUiData.viewType = VIEW_TYPE_NORMAL
-                    diceUiData
-                }
-                ?.sortedByDescending { diceUiData -> diceUiData.getSumResult() }
-                ?.take(penaltyWinningCount.value ?: 1)?.map { diceUiData ->
-                    diceUiData.viewType = VIEW_TYPE_PENALTY_WINNING
-                }
-            subList
-        }
+        return@map subList
+//        return@map if (gameRule.value == false) {
+//            subList
+//                ?.map { diceUiData ->
+//                    diceUiData.viewType = VIEW_TYPE_NORMAL
+//                    diceUiData
+//                }
+//                ?.sortedByDescending { diceUiData -> diceUiData.getSumResult() }
+//                ?.mapIndexed { index, diceUiData ->
+////                    if (index < (penaltyWinningCount.value ?: 1)) {
+////                        diceUiData.viewType = VIEW_TYPE_PENALTY_WINNING
+////                    }
+//                    diceUiData
+//                }
+//        } else {
+//            subList
+//                ?.map { diceUiData ->
+//                    diceUiData.viewType = VIEW_TYPE_NORMAL
+//                    diceUiData
+//                }
+//                ?.sortedBy { diceUiData -> diceUiData.getSumResult() }
+//                ?.mapIndexed { index, diceUiData ->
+////                    if (index < (penaltyWinningCount.value ?: 1)) {
+////                        diceUiData.viewType = VIEW_TYPE_PENALTY_WINNING
+////                    }
+//                    diceUiData
+//                }
+//        }
     }
 
 

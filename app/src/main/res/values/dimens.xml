@@ -2,4 +2,6 @@
 <resources>
     <dimen name="jebi_horizontal_margin">8dp</dimen>
     <dimen name="jebi_vertical_margin">8dp</dimen>
+    <dimen name="dp4">4dp</dimen>
+    <dimen name="dp8">8dp</dimen>
 </resources>

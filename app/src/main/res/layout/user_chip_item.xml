@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.maro.luckyme.data.common.CommonData" />
+
+        <variable
+            name="position"
+            type="Integer" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <include
+            layout="@layout/user_chip_view"
+            app:description="@{CommonData.get12KanjiNameByIndex(context, position)}"
+            app:position="@{position}" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

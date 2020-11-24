@@ -1,5 +1,6 @@
 package com.maro.luckyme.data.common
 
+import android.content.Context
 import com.maro.luckyme.R
 
 
@@ -31,6 +32,16 @@ class CommonData {
             }
             return null
         }
+
+        @JvmStatic
+        fun get12KanjiNameByIndex(context: Context, index: Int): String? {
+            val nameArray = context.resources.getStringArray(R.array.kanji_name_array)
+            if (index in nameArray.indices) {
+                return nameArray[index]
+            }
+            return null
+        }
+
     }
 
 }

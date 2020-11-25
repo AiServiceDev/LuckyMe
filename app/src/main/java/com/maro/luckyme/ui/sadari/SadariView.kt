@@ -16,6 +16,8 @@ import com.maro.luckyme.ui.sadari.data.Constants.DEFAULT_BOMB_COUNT
 import com.maro.luckyme.ui.sadari.data.Constants.DEFAULT_PLAYER_COUNT
 import com.maro.luckyme.ui.sadari.data.Constants.DIRECTION_RIGHT
 import com.maro.luckyme.ui.sadari.data.Constants.SPEED
+import com.maro.luckyme.ui.sadari.data.Constants.STATUS_STARTED
+import com.maro.luckyme.ui.sadari.data.Constants.STATUS_WAITING
 import com.maro.luckyme.ui.sadari.data.Constants.TOTAL_BRANCH_COUNT
 import com.maro.luckyme.ui.sadari.data.DataHelper
 import com.maro.luckyme.ui.sadari.data.Stream
@@ -38,6 +40,7 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     val DP16 = resources.getDimensionPixelSize(R.dimen.dp16)
     val DP8 = resources.getDimensionPixelSize(R.dimen.dp8)
     val DP20 = resources.getDimensionPixelSize(R.dimen.dp20)
+    val DP24 = resources.getDimensionPixelSize(R.dimen.dp24)
 
     val CELL_WIDTH = resources.getDimensionPixelSize(R.dimen.sadari_cell_width)
     val CELL_HEIGHT = resources.getDimensionPixelSize(R.dimen.sadari_cell_height)
@@ -99,8 +102,11 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     var viewStartX = 0 // view의 시작 위치
 
     lateinit var paint: Paint
+    lateinit var paint2: Paint
     lateinit var animPaint: Paint
     lateinit var hitPaint: Paint
+    lateinit var startPaint: Paint
+
 
     lateinit var sadari: LinkedList<Stream>
     lateinit var bombIndexList: List<Int>
@@ -114,6 +120,9 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     var pos: FloatArray = FloatArray(2)
     var tan: FloatArray = FloatArray(2)
 
+    // 게임 상태
+    var playStatus = STATUS_WAITING
+
     init {
         initView()
     }
@@ -121,6 +130,11 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     private fun initView() {
         paint = Paint().apply {
             color = ContextCompat.getColor(context, R.color.indigo_200)
+            strokeWidth = STROKE_WIDTH.toFloat()
+            style = Paint.Style.FILL
+        }
+        paint2 = Paint().apply {
+            color = ContextCompat.getColor(context, R.color.teal_700)
             strokeWidth = STROKE_WIDTH.toFloat()
             style = Paint.Style.FILL
         }
@@ -139,6 +153,12 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             textSize = resources.getDimensionPixelSize(R.dimen.dp12).toFloat()
         }
 
+        startPaint = Paint().apply {
+            color = ContextCompat.getColor(context, R.color.white)
+            style = Paint.Style.FILL
+            textSize = resources.getDimensionPixelSize(R.dimen.dp24).toFloat()
+        }
+
         setOnTouchListener { v, event ->
             processTouchEvent(v, event)
         }
@@ -155,6 +175,7 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         sadari = DataHelper.makeSadariData(playerCount)
         bombIndexList = DataHelper.makeBombIndexList(playerCount, bombCount)
         playerResultMap.clear()
+        playStatus = STATUS_WAITING
 
         requestLayout()
         invalidate()
@@ -189,6 +210,7 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
                 drawPlayer(canvas)
                 drawHitAndMiss(canvas)
                 drawAnimPath(canvas)
+                drawStartButton(canvas)
             }
         }
     }
@@ -235,6 +257,7 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
             var x = viewStartX + (CELL_WIDTH * i).toFloat()
 
             canvas.drawCircle(x + DP20.toFloat(), sadariEndY + DP20.toFloat() + DP8, DP20.toFloat(), paint)
+            // XXX 문구
             if (bombIndexList.contains(i)) {
                 canvas.drawText("꽝", x + 34, sadariEndY + DP20.toFloat() + 34, hitPaint)
             } else {
@@ -276,20 +299,56 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         invalidate()
     }
 
+    private fun drawStartButton(canvas: Canvas) {
+        if (playStatus != STATUS_WAITING) {
+            return
+        }
+
+        var rect = getSadariRect()
+        var left = rect.left.toFloat()
+        var right = rect.right.toFloat()
+        var top = rect.top.toFloat()
+        var bottom = rect.bottom.toFloat()
+
+        var margin = DP24
+
+        // DP24는 텍스트 사이즈
+        var textX = left + (right - left) / 2 - (DP24 * 4 / 2) + 10 // 10을 더한 이유는 억지로 위치를 맞추기 위함
+        var textY = top + (bottom - top) / 2
+
+        var buttonRect = getStartButtonRect()
+
+        canvas.drawRect(left - margin, top + margin, right + margin, bottom - margin, paint)
+        canvas.drawRect(buttonRect.left.toFloat(), buttonRect.top.toFloat(), buttonRect.right.toFloat(), buttonRect.bottom.toFloat(), paint2)
+        canvas.drawText("시작하기", textX, textY, startPaint)
+    }
+
     private fun processTouchEvent(v: View, event: MotionEvent): Boolean {
         if (event.action == ACTION_UP) {
-            PLAYER_LIST.forEachIndexed { index, player ->
-                if (player.bounds.left <= event.x && player.bounds.right >= event.x
-                        && player.bounds.top <= event.y && player.bounds.bottom >= event.y) {
-
-                    if (!playerResultMap.containsKey(index)) {
-                        playerResultMap.put(index, PlayerResult(
-                                PathMeasure(branchToPath(DataHelper.getPlayerPathList(sadari, index), index), false),
-                                PLAYER_HIT_LIST[index],
-                        ))
+            when (playStatus) {
+                STATUS_WAITING -> {
+                    var buttonRect = getStartButtonRect()
+                    if (buttonRect.left <= event.x && buttonRect.right >= event.x
+                            && buttonRect.top <= event.y && buttonRect.bottom >= event.y) {
+                        playStatus = STATUS_STARTED
+                        invalidate()
                     }
+                }
+                STATUS_STARTED -> {
+                    PLAYER_LIST.forEachIndexed { index, player ->
+                        if (player.bounds.left <= event.x && player.bounds.right >= event.x
+                                && player.bounds.top <= event.y && player.bounds.bottom >= event.y) {
 
-                    invalidate()
+                            if (!playerResultMap.containsKey(index)) {
+                                playerResultMap.put(index, PlayerResult(
+                                        PathMeasure(branchToPath(DataHelper.getPlayerPathList(sadari, index), index), false),
+                                        PLAYER_HIT_LIST[index],
+                                ))
+                            }
+
+                            invalidate()
+                        }
+                    }
                 }
             }
         }
@@ -321,6 +380,25 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
 
         return path
+    }
+
+    private fun getSadariRect(): Rect {
+        return Rect().apply {
+            top = PLAYER_WIDTH + DP8
+            bottom = top + KKODARI + CELL_HEIGHT * TOTAL_BRANCH_COUNT + KKODARI
+            left = viewStartX + PLAYER_WIDTH / 2
+            right = left + CELL_WIDTH * (playerCount - 1)
+        }
+    }
+
+    private fun getStartButtonRect(): Rect {
+        var sadariRect = getSadariRect()
+        return Rect().apply {
+            top = sadariRect.top + DP24 * 4
+            bottom = sadariRect.bottom - DP24 * 4
+            left = sadariRect.left + DP24 * 2
+            right = sadariRect.right - DP24 * 2
+        }
     }
 }
 

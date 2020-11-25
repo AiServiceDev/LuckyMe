@@ -6,6 +6,7 @@
     <dimen name="dp12">12dp</dimen>
     <dimen name="dp16">16dp</dimen>
     <dimen name="dp20">20dp</dimen>
+    <dimen name="dp24">24dp</dimen>
 
     <dimen name="jebi_horizontal_margin">8dp</dimen>
     <dimen name="jebi_vertical_margin">8dp</dimen>

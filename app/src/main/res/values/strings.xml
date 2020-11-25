@@ -5,4 +5,7 @@
     <string name="sadari_player_count_desc">(최소%d명 ~ 최대%d명)</string>
     <string name="sadari_bomb_count">%d개</string>
     <string name="sadari_bomb_count_desc">(최소%d개 ~ 최대%d개)</string>
+
+    <string name="start">시작하기</string>
+    <string name="restart">재시작</string>
 </resources>

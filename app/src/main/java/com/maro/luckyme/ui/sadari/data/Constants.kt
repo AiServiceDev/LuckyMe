@@ -24,4 +24,8 @@ object Constants {
 
     val MIN_BOMB_COUNT = 1
     val MAX_BOMB_COUNT = MAX_PLAYER_COUNT / 2
+
+    val STATUS_WAITING = 1
+    val STATUS_STARTED = 2
+    val STATUS_COMPLETED = 3
 }

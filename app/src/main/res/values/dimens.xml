@@ -17,4 +17,5 @@
     <dimen name="sadari_cell_height">20dp</dimen>
     <!-- 가로 간격 -->
     <dimen name="sadari_cell_width">48dp</dimen>
+
 </resources>

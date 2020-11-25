@@ -1,6 +1,5 @@
 package com.maro.luckyme.domain.jebi
 
-import com.maro.luckyme.domain.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -12,10 +11,11 @@ class LuckyRepository {
      * @param winning 당첨 인원
      * @param total 전체 참여 인원
      */
-    fun makeResult(winning: Int, total: Int): Result<Pair<List<Int>, List<Int>>> {
+    fun makeResult(winning: Int, total: Int): Pair<List<Int>, List<Int>> {
+        Timber.d("[sunchulbaek] makeResult() ${Thread.currentThread()}")
         val first = makeRandom(winning, total)
         val second = makeRandom(total, total)
-        return Result.Success(Pair(first, second))
+        return Pair(first, second)
     }
 
     suspend fun makeResultCoroutine(winning: Int, total: Int): Pair<List<Int>, List<Int>> {

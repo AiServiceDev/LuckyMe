@@ -27,7 +27,7 @@ class JebiFragment : Fragment() {
 
         binding = JebiFragmentBinding.inflate(inflater, null, false).apply {
             viewModel = this@JebiFragment.viewModel.apply {
-                // initPlain(DEFAULT_WINNING, DEFAULT_TOTAL) // 밋밋한 버전. 임의 지정
+                // initMediator(DEFAULT_WINNING, DEFAULT_TOTAL) // MediatorUseCase 버전
                 // initCoroutine(DEFAULT_WINNING, DEFAULT_TOTAL) // 코루틴 버전
                 initFlow(DEFAULT_WINNING, DEFAULT_TOTAL) // Flow 버전
             }

@@ -14,4 +14,12 @@ class DiceActivity : AppCompatActivity() {
                 .commitNow()
         }
     }
+
+    override fun onBackPressed() {
+        if (!onBackPressedDispatcher.hasEnabledCallbacks()) {
+            onBackPressedDispatcher.onBackPressed()
+            return
+        }
+        super.onBackPressed()
+    }
 }

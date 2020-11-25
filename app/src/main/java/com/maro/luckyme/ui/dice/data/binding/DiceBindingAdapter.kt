@@ -1,6 +1,7 @@
 package com.maro.luckyme.ui.dice.data.binding
 
 import android.animation.Animator
+import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.databinding.BindingAdapter
 import com.airbnb.lottie.LottieAnimationView
@@ -8,6 +9,7 @@ import com.airbnb.lottie.LottieDrawable
 import com.maro.luckyme.data.common.CommonData
 import com.maro.luckyme.ui.dice.DiceViewModel
 import com.maro.luckyme.ui.dice.data.DiceUiData
+import com.maro.luckyme.ui.view.ClipOutlineProvider
 import kotlin.random.Random
 
 
@@ -41,19 +43,14 @@ class DiceBindingAdapter {
                                     else -> "dice/touzidice_random.json"
                                 }
                             )
-                            view.progress = when (diceData.type) {
-                                DiceViewModel.DiceStatusType.SHUFFLE -> {
-                                    0f
-                                }
-                                else -> {
-                                    view.repeatMode = LottieDrawable.REVERSE
-                                    1f
-                                }
-                            }
                             view.removeAllAnimatorListeners()
-                            if (diceData.type == DiceViewModel.DiceStatusType.RESULT) return
+                            if (diceData.type == DiceViewModel.DiceStatusType.RESULT) {
+                                view.pauseAnimation()
+                                view.progress = 1f
+                                return
+                            }
                             view.repeatCount = 0
-                            view.speed = (Random.nextLong(9L, 18L) / 10f)
+                            view.speed = (Random.nextLong(10L, 18L) / 10f)
                             view.addAnimatorListener(object : Animator.AnimatorListener {
                                 override fun onAnimationStart(animation: Animator?) {
                                 }
@@ -87,5 +84,16 @@ class DiceBindingAdapter {
                 }
             }
         }
+
+        @JvmStatic
+        @BindingAdapter("roundRectOutlineProvider")
+        fun setRoundRectProvider(view: View, radius: Float?) {
+            radius?.let {
+                view.outlineProvider = ClipOutlineProvider(radius)
+                view.clipToOutline = true
+                view.invalidateOutline()
+            }
+        }
+
     }
 }

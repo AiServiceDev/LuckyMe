@@ -1,0 +1,16 @@
+<resources>
+    <string-array name="kanji_name_array">
+        <item>자</item>
+        <item>축</item>
+        <item>인</item>
+        <item>묘</item>
+        <item>진</item>
+        <item>사</item>
+        <item>오</item>
+        <item>미</item>
+        <item>신</item>
+        <item>유</item>
+        <item>술</item>
+        <item>해</item>
+    </string-array>
+</resources>

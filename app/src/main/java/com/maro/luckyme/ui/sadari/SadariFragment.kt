@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.BindingAdapter
 import com.maro.luckyme.databinding.SadariFragmentBinding
 
 class SadariFragment : Fragment() {
@@ -28,5 +29,14 @@ class SadariFragment : Fragment() {
         }
 
         return binding.root
+    }
+}
+
+@BindingAdapter("playerCount", "bombCount")
+fun sadariData(view: SadariView, playerCount: Int?, bombCount: Int?) {
+    playerCount?.let {
+        bombCount?.let {
+            view.setData(playerCount, bombCount)
+        }
     }
 }

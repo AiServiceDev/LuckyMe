@@ -47,48 +47,48 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     val PLAYER_WIDTH = resources.getDimensionPixelSize(R.dimen.sadari_player_width)
     val PLAYER_WIDTH_SMALL = resources.getDimensionPixelSize(R.dimen.sadari_player_width_s)
     val PLAYER_LIST = mutableListOf<VectorDrawableCompat>().apply {
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_dog, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_chicken, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_cow, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_dragon, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_horse, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_monkey, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_pig, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_rabbit, null)!!)
         add(VectorDrawableCompat.create(resources, R.drawable.ic_rat, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_sheep, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_snake, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_cow, null)!!)
         add(VectorDrawableCompat.create(resources, R.drawable.ic_tiger, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_rabbit, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_dragon, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_snake, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_horse, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_sheep, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_monkey, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_chicken, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_dog, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_pig, null)!!)
     }
 
     val PLAYER_HIT_LIST = mutableListOf<VectorDrawableCompat>().apply {
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_dog, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_chicken, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_cow, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_dragon, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_horse, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_monkey, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_pig, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_rabbit, null)!!)
         add(VectorDrawableCompat.create(resources, R.drawable.ic_rat, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_sheep, null)!!)
-        add(VectorDrawableCompat.create(resources, R.drawable.ic_snake, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_cow, null)!!)
         add(VectorDrawableCompat.create(resources, R.drawable.ic_tiger, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_rabbit, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_dragon, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_snake, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_horse, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_sheep, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_monkey, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_chicken, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_dog, null)!!)
+        add(VectorDrawableCompat.create(resources, R.drawable.ic_pig, null)!!)
     }
 
     val COLOR_LIST = mutableListOf<Int>().apply {
-        add(R.color.dog)
-        add(R.color.chicken)
-        add(R.color.cow)
-        add(R.color.dragon)
-        add(R.color.horse)
-        add(R.color.monkey)
-        add(R.color.pig)
-        add(R.color.rabbit)
         add(R.color.rat)
-        add(R.color.sheep)
-        add(R.color.snake)
+        add(R.color.cow)
         add(R.color.tiger)
+        add(R.color.rabbit)
+        add(R.color.dragon)
+        add(R.color.snake)
+        add(R.color.horse)
+        add(R.color.sheep)
+        add(R.color.monkey)
+        add(R.color.chicken)
+        add(R.color.dog)
+        add(R.color.pig)
     }
 
     val STROKE_WIDTH = resources.getDimensionPixelSize(Constants.STROKE_WIDTH)
@@ -115,21 +115,7 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
     var tan: FloatArray = FloatArray(2)
 
     init {
-        initAttr(attrs, defStyleAttr)
         initView()
-
-        play()
-    }
-
-    private fun initAttr(attrs: AttributeSet?, defStyleAttr: Int) {
-        context.theme.obtainStyledAttributes(attrs, R.styleable.SadariView, defStyleAttr, 0).apply {
-            try {
-                playerCount = getInt(R.styleable.SadariView_playerCount, DEFAULT_PLAYER_COUNT)
-                bombCount = getInt(R.styleable.SadariView_bombCount, DEFAULT_BOMB_COUNT)
-            } finally {
-                recycle()
-            }
-        }
     }
 
     private fun initView() {
@@ -158,9 +144,19 @@ class SadariView @JvmOverloads constructor(context: Context, attrs: AttributeSet
         }
     }
 
+    fun setData(playerCount: Int, bombCount: Int) {
+        this@SadariView.playerCount = playerCount
+        this@SadariView.bombCount = bombCount
+
+        play()
+    }
+
     fun play() {
         sadari = DataHelper.makeSadariData(playerCount)
         bombIndexList = DataHelper.makeBombIndexList(playerCount, bombCount)
+        playerResultMap.clear()
+
+        requestLayout()
         invalidate()
     }
 

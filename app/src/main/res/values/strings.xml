@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">복불복M</string>
+
+    <string name="sadari_player_count">%d명</string>
+    <string name="sadari_player_count_desc">(최소%d명 ~ 최대%d명)</string>
+    <string name="sadari_bomb_count">%d개</string>
+    <string name="sadari_bomb_count_desc">(최소%d개 ~ 최대%d개)</string>
 </resources>

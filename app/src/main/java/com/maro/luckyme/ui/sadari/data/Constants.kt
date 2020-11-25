@@ -4,7 +4,7 @@ import com.maro.luckyme.R
 
 object Constants {
     // 설정
-    val DEFAULT_PLAYER_COUNT = 9
+    val DEFAULT_PLAYER_COUNT = 6
     val DEFAULT_BOMB_COUNT = 1
 
     val MIN_BRANCH_COUNT = 2 // 사다리 한칸 최소 브랜치 수
@@ -21,4 +21,7 @@ object Constants {
 
     val MIN_PLAYER_COUNT = 2
     val MAX_PLAYER_COUNT = 12
+
+    val MIN_BOMB_COUNT = 1
+    val MAX_BOMB_COUNT = MAX_PLAYER_COUNT / 2
 }

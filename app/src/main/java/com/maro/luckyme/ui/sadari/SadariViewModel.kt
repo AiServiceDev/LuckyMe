@@ -74,4 +74,8 @@ class SadariViewModel : ViewModel() {
 
         _bombCount.value = _bombCount.value!! + 1
     }
+
+    fun onRestartClicked() {
+        _playerCount.value = _playerCount.value
+    }
 }

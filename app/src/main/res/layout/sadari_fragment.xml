@@ -22,101 +22,127 @@
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="match_parent" />-->
 
-        <LinearLayout
-            android:id="@+id/llPlayer"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clControl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent"
             >
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/llPlayer"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="인원수"
-                />
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/abRestart"
+                >
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="인원수"
+                    />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:minWidth="0dp"
+                    android:onClick="@{(view) -> viewModel.onMinusPlayerClicked()}"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{@string/sadari_player_count(viewModel.playerCount)}"
+                    />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+"
+                    android:minWidth="0dp"
+                    android:onClick="@{(view) -> viewModel.onPlusPlayerClicked()}"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{@string/sadari_player_count_desc(Constants.INSTANCE.MIN_PLAYER_COUNT, Constants.INSTANCE.MAX_PLAYER_COUNT)}"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llBomb"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintTop_toBottomOf="@id/llPlayer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/abRestart"
+                >
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="폭탄수"
+                    />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:minWidth="0dp"
+                    android:onClick="@{(view) -> viewModel.onMinusBombClicked()}"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{@string/sadari_bomb_count(viewModel.bombCount)}"
+                    />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+"
+                    android:minWidth="0dp"
+                    android:onClick="@{(view) -> viewModel.onPlusBombClicked()}"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{@string/sadari_bomb_count_desc(Constants.INSTANCE.MIN_BOMB_COUNT, viewModel.maxBombCount)}"
+                    />
+
+            </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-"
-                android:minWidth="0dp"
-                android:onClick="@{(view) -> viewModel.onMinusPlayerClicked()}"/>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{@string/sadari_player_count(viewModel.playerCount)}"
+                android:id="@+id/abRestart"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:text="재시작"
+                android:layout_marginEnd="16dp"
+                android:onClick="@{(view) -> viewModel.onRestartClicked()}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/llPlayer"
+                app:layout_constraintBottom_toBottomOf="@id/llBomb"
                 />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="+"
-                android:minWidth="0dp"
-                android:onClick="@{(view) -> viewModel.onPlusPlayerClicked()}"/>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{@string/sadari_player_count_desc(Constants.INSTANCE.MIN_PLAYER_COUNT, Constants.INSTANCE.MAX_PLAYER_COUNT)}"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/llBomb"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:layout_marginTop="4dp"
-            app:layout_constraintTop_toBottomOf="@id/llPlayer"
-            >
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="폭탄수"
-                />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-"
-                android:minWidth="0dp"
-                android:onClick="@{(view) -> viewModel.onMinusBombClicked()}"/>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{@string/sadari_bomb_count(viewModel.bombCount)}"
-                />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="+"
-                android:minWidth="0dp"
-                android:onClick="@{(view) -> viewModel.onPlusBombClicked()}"/>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{@string/sadari_bomb_count_desc(Constants.INSTANCE.MIN_BOMB_COUNT, viewModel.maxBombCount)}"
-                />
-
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/llBomb"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/clControl"
             app:layout_constraintBottom_toBottomOf="parent"
             >
 

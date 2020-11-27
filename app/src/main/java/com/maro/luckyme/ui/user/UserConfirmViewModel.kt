@@ -14,7 +14,7 @@ class UserConfirmViewModel : ViewModel() {
         const val DEFAULT_USER_COUNT = 4
         const val DEFAULT_PENALTY_WINNER_COUNT = 1
         const val MAX_USER_COUNT = 12
-        const val MIN_USER_COUNT = 1
+        const val MIN_USER_COUNT = 2
         const val MIN_PENALTY_WINNER_USER_COUNT = 1
     }
 
@@ -44,7 +44,11 @@ class UserConfirmViewModel : ViewModel() {
 
     fun minusUserCount() = totalUserCount.value?.apply {
         if (this > MIN_USER_COUNT) {
-            totalUserCount.value = minus(1)
+            val changeValue = minus(1)
+            totalUserCount.value = changeValue
+            if (penaltyWinnerCount.value ?: 1 >= changeValue) {
+                penaltyWinnerCount.value = changeValue - 1
+            }
         }
     }
 
